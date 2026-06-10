@@ -1,48 +1,156 @@
+/* Blackfuel ("FUEL") theme for Open WebUI.
+ *
+ * Tuned for Open WebUI's DARK mode. Mirrors the Blackfuel SaaS brand
+ * (ai-platform/saas/frontend: app/app.css + tailwind.config.ts):
+ * near-black surfaces with a single neon-green accent (#d8ff3e).
+ *
+ * Convention: overrides use !important to beat Open WebUI's compiled
+ * Tailwind, matching the original theme file.
+ */
+
+/* @import must come before any other rule. Brand font stack (Google Fonts). */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:ital,wght@1,700;1,900&family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap");
+
 :root {
-  --primary-text: #8b1538;
-  --primary-pink: #ff69b4;
-  --primary-bg: #ffe0ec;
-  --hover-bg: #ffc0db;
+  --bf-green: #d8ff3e;       /* primary / accent — hsl(72 100% 62%) */
+  --bf-green-dim: #9acc2e;   /* accent hover */
+  --bf-bg: #050505;          /* app background — hsl(0 0% 2%) */
+  --bf-sidebar: #0a0a0a;     /* sidebar — hsl(0 0% 4%) */
+  --bf-card: #121212;        /* surfaces / inputs / popovers — hsl(0 0% 7%) */
+  --bf-elevated: #1a1a1a;    /* hover surface — hsl(0 0% 10%) */
+  --bf-border: #262626;      /* borders — hsl(0 0% 15%) */
+  --bf-text: #d9d9d9;        /* primary text — hsl(0 0% 85%) */
+  --bf-text-muted: #8c8c8c;  /* muted text — hsl(0 0% 55%) */
+  --bf-on-accent: #050505;   /* text / icons on neon-green surfaces */
+  --bf-glow: 0 0 15px rgba(216, 255, 62, 0.3);
 }
 
-* {
-  color: var(--primary-text) !important;
+/* ---- Typography ----------------------------------------------------------
+ * Inter as the base UI font, Rajdhani for headings, JetBrains Mono for code —
+ * matching the SaaS app's font conventions. Orbitron is the brand logo font.
+ * Font-family only; we do not touch text color here so syntax highlighting and
+ * Open WebUI's own dark-mode text colors are preserved. */
+body {
+  background-color: var(--bf-bg) !important;
+  color: var(--bf-text);
+  font-family: "Inter", sans-serif;
 }
 
-#send-message-button {
-  background-color: var(--primary-pink) !important;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Rajdhani", sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.02em;
 }
 
+code,
+pre,
+kbd,
+samp {
+  font-family: "JetBrains Mono", monospace;
+}
+
+/* ---- Sidebar -------------------------------------------------------------- */
 #sidebar {
-  background-color: var(--primary-bg) !important;
+  background-color: var(--bf-sidebar) !important;
 }
 
 #sidebar > div *:hover {
-  background-color: var(--hover-bg) !important;
+  background-color: var(--bf-elevated) !important;
 }
 
-[aria-label="Voice mode"] {
-  background-color: var(--primary-pink) !important;
+/* ---- Primary buttons (neon green) ----------------------------------------
+ * Open WebUI 0.9.6 renders its primary / CTA buttons as a black<->white invert
+ * (`bg-black ... dark:bg-white`). In dark mode that is a white pill with black
+ * text; we recolor it to the neon-green brand accent. The `[class~="..."]`
+ * matchers target the exact Tailwind tokens, so they survive each button's
+ * padding / rounding / hover variations (rounded-full vs rounded-lg, gray-900
+ * vs gray-950, ...) instead of relying on one brittle full-class selector.
+ * The `~=` (whitespace-token) match also excludes the translucent
+ * `bg-black/5 dark:bg-white/10` surfaces, which are a different token.
+ * Neon green is bright, so foreground text / icons must be near-black. */
+[class~="bg-black"][class~="dark:bg-white"],
+[class~="bg-black"][class~="dark:bg-white"] * {
+  color: var(--bf-on-accent) !important;
 }
 
+[class~="bg-black"][class~="dark:bg-white"] {
+  background-color: var(--bf-green) !important;
+}
+
+[class~="bg-black"][class~="dark:bg-white"]:hover {
+  background-color: var(--bf-green-dim) !important;
+}
+
+/* Send button: `#send-message-button` is a type=submit button carrying the
+ * invert classes when active, and a greyed `bg-gray-*` + `disabled` state when
+ * the prompt is empty. Scope to :not(:disabled) so the disabled state keeps
+ * Open WebUI's grey instead of looking like an active neon button. */
+#send-message-button:not(:disabled),
+#send-message-button:not(:disabled) * {
+  color: var(--bf-on-accent) !important;
+}
+
+#send-message-button:not(:disabled) {
+  background-color: var(--bf-green) !important;
+  box-shadow: var(--bf-glow) !important;
+}
+
+/* Voice Input: a plain icon button in 0.9.6 (was a filled "Voice mode" button
+ * in older builds — the aria-label changed). Accent the icon color rather than
+ * filling it, in keeping with the brand's "neon green as accent, not large
+ * fill" rule. The svg uses fill="currentColor", so a color override is enough. */
+[aria-label="Voice Input"],
+[aria-label="Voice Input"] svg {
+  color: var(--bf-green) !important;
+}
+
+/* Toggles: custom role="switch" toggles (Settings) expose aria-checked; the
+ * bits-ui <Switch> component exposes data-state="checked" (and ships a
+ * bg-emerald on-state). Cover both so every "on" switch reads neon green. */
+[role="switch"][aria-checked="true"],
+[role="switch"][data-state="checked"] {
+  background-color: var(--bf-green) !important;
+}
+
+/* ---- Tooltips ------------------------------------------------------------
+ * Dark surface with a subtle border — NOT a neon fill, which would be garish. */
+.tippy-box,
 .tippy-content {
-  background-color: var(--primary-pink) !important;
-  border-color: var(--primary-pink) !important;
+  background-color: var(--bf-card) !important;
+  border-color: var(--bf-border) !important;
+  color: var(--bf-text) !important;
 }
 
-.tippy-box {
-  background-color: var(--primary-pink) !important;
-  border-color: var(--primary-pink) !important;
+/* ---- Accent details ------------------------------------------------------ */
+*:focus-visible {
+  outline-color: var(--bf-green) !important;
 }
 
-button[type="submit"] {
-  background-color: var(--primary-pink) !important;
+::selection {
+  background-color: var(--bf-green);
+  color: var(--bf-on-accent);
 }
 
-[role="switch"][aria-checked="true"] {
-  background-color: var(--primary-pink) !important;
+/* ---- Scrollbars (matches SaaS app.css) ----------------------------------- */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
 
-button.px-3\.5.py-1\.5.text-sm.font-medium.bg-black.hover\:bg-gray-900.text-white.dark\:bg-white.dark\:text-black.dark\:hover\:bg-gray-100.transition.rounded-full {
-  background-color: var(--primary-pink) !important;
+::-webkit-scrollbar-track {
+  background: #0d0d0d;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333333;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #4d4d4d;
 }
