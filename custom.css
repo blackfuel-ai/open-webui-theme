@@ -63,46 +63,58 @@ samp {
   background-color: var(--bf-elevated) !important;
 }
 
-/* ---- Primary / accent surfaces (neon green) ------------------------------
- * Neon green is bright, so text and icons on top must be near-black. Children
- * are included so nested <svg>/<span> inherit the dark on-accent color. */
-#send-message-button,
-#send-message-button * {
+/* ---- Primary buttons (neon green) ----------------------------------------
+ * Open WebUI 0.9.6 renders its primary / CTA buttons as a black<->white invert
+ * (`bg-black ... dark:bg-white`). In dark mode that is a white pill with black
+ * text; we recolor it to the neon-green brand accent. The `[class~="..."]`
+ * matchers target the exact Tailwind tokens, so they survive each button's
+ * padding / rounding / hover variations (rounded-full vs rounded-lg, gray-900
+ * vs gray-950, ...) instead of relying on one brittle full-class selector.
+ * The `~=` (whitespace-token) match also excludes the translucent
+ * `bg-black/5 dark:bg-white/10` surfaces, which are a different token.
+ * Neon green is bright, so foreground text / icons must be near-black. */
+[class~="bg-black"][class~="dark:bg-white"],
+[class~="bg-black"][class~="dark:bg-white"] * {
   color: var(--bf-on-accent) !important;
 }
 
-#send-message-button {
+[class~="bg-black"][class~="dark:bg-white"] {
+  background-color: var(--bf-green) !important;
+}
+
+[class~="bg-black"][class~="dark:bg-white"]:hover {
+  background-color: var(--bf-green-dim) !important;
+}
+
+/* Send button: `#send-message-button` is a type=submit button carrying the
+ * invert classes when active, and a greyed `bg-gray-*` + `disabled` state when
+ * the prompt is empty. Scope to :not(:disabled) so the disabled state keeps
+ * Open WebUI's grey instead of looking like an active neon button. */
+#send-message-button:not(:disabled),
+#send-message-button:not(:disabled) * {
+  color: var(--bf-on-accent) !important;
+}
+
+#send-message-button:not(:disabled) {
   background-color: var(--bf-green) !important;
   box-shadow: var(--bf-glow) !important;
 }
 
-button[type="submit"],
-button[type="submit"] * {
-  color: var(--bf-on-accent) !important;
+/* Voice Input: a plain icon button in 0.9.6 (was a filled "Voice mode" button
+ * in older builds — the aria-label changed). Accent the icon color rather than
+ * filling it, in keeping with the brand's "neon green as accent, not large
+ * fill" rule. The svg uses fill="currentColor", so a color override is enough. */
+[aria-label="Voice Input"],
+[aria-label="Voice Input"] svg {
+  color: var(--bf-green) !important;
 }
 
-button[type="submit"] {
+/* Toggles: custom role="switch" toggles (Settings) expose aria-checked; the
+ * bits-ui <Switch> component exposes data-state="checked" (and ships a
+ * bg-emerald on-state). Cover both so every "on" switch reads neon green. */
+[role="switch"][aria-checked="true"],
+[role="switch"][data-state="checked"] {
   background-color: var(--bf-green) !important;
-  box-shadow: var(--bf-glow) !important;
-}
-
-[aria-label="Voice mode"],
-[aria-label="Voice mode"] * {
-  color: var(--bf-on-accent) !important;
-}
-
-[aria-label="Voice mode"] {
-  background-color: var(--bf-green) !important;
-}
-
-[role="switch"][aria-checked="true"] {
-  background-color: var(--bf-green) !important;
-}
-
-/* The black/white pill primary button (e.g. confirm / "New chat" style). */
-button.px-3\.5.py-1\.5.text-sm.font-medium.bg-black.hover\:bg-gray-900.text-white.dark\:bg-white.dark\:text-black.dark\:hover\:bg-gray-100.transition.rounded-full {
-  background-color: var(--bf-green) !important;
-  color: var(--bf-on-accent) !important;
 }
 
 /* ---- Tooltips ------------------------------------------------------------

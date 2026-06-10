@@ -5,8 +5,10 @@ A custom [Open WebUI](https://github.com/open-webui/open-webui) theme that match
 (`#d8ff3e`). The theme is tuned for Open WebUI's **dark mode**.
 
 The styling lives entirely in [`custom.css`](./custom.css), which the
-[`Dockerfile`](./Dockerfile) bakes into the official Open WebUI image at
-`/app/build/static/custom.css`.
+[`Dockerfile`](./Dockerfile) bakes into the official **Open WebUI 0.9.6** image at
+`/app/build/static/custom.css` (Open WebUI loads it via the
+`<link href="/static/custom.css">` in its `app.html`). The selectors are matched
+against the 0.9.6 markup; expect to revisit them on a major Open WebUI upgrade.
 
 ![screenshot](./screenshot.webp)
 
