@@ -1,11 +1,36 @@
-# Open WebUI custom theme
+# Blackfuel theme for Open WebUI
 
-Read the full blog post [about customizing Open WebUI here](https://sliplane.io/blog/how-to-build-custom-open-webui-themes?utm_source=github)
+A custom [Open WebUI](https://github.com/open-webui/open-webui) theme that matches the
+**Blackfuel ("FUEL")** SaaS brand: near-black surfaces with a single neon-green accent
+(`#d8ff3e`). The theme is tuned for Open WebUI's **dark mode**.
+
+The styling lives entirely in [`custom.css`](./custom.css), which the
+[`Dockerfile`](./Dockerfile) bakes into the official Open WebUI image at
+`/app/build/static/custom.css`.
 
 ![screenshot](./screenshot.webp)
 
 ```bash
-docker build -t openwebui-custom .
+docker build -t openwebui-blackfuel .
 
-docker run -p 3000:8080 -e OPENAI_API_KEY=your_secret_key -v open-webui:/app/backend/data --restart always openwebui-custom
+docker run -p 3000:8080 -e OPENAI_API_KEY=your_secret_key -v open-webui:/app/backend/data --restart always openwebui-blackfuel
 ```
+
+Then open <http://localhost:3000> and switch the interface to **Dark** mode
+(Settings → General → Theme) to see the brand surfaces.
+
+## Brand reference
+
+Tokens are taken from the Blackfuel SaaS frontend (`ai-platform/saas/frontend`):
+
+| Role | Hex |
+| --- | --- |
+| Accent (neon green) | `#d8ff3e` |
+| App background | `#050505` |
+| Sidebar | `#0a0a0a` |
+| Surfaces / inputs | `#121212` |
+| Border | `#262626` |
+| Text | `#d9d9d9` |
+
+Fonts (loaded from Google Fonts at runtime): Inter (body), Rajdhani (headings),
+JetBrains Mono (code), Orbitron (brand).
